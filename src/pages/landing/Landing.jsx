@@ -18,7 +18,7 @@ import useFetchData from "../../hooks/useFetchData";
 function Landing(props) {
   const [logout, user] = useUserStore((state) => [state.logout, state.user], shallow);
   const [testOrg, setTestOrg] = useState([]);
-  const { data, fetchData, error, isFetching } = useFetchData(
+  const { data, fetchData: fetch , error, isFetching } = useFetchData(
     {
       type: "post",
       route: "org/user",
@@ -28,7 +28,7 @@ function Landing(props) {
   );
 
   React.useEffect(() => {
-    fetchData();
+    fetch();
     requestHandler({ route: "org/all", type: "post" }).then((res) => {
       if (res && !res.errors && res?.length) {
         setTestOrg(res);
@@ -49,7 +49,7 @@ function Landing(props) {
   const addToOrg = (name) => {
     requestHandler({ route: "org/adduser", type: "post", body: { name, profile_id: user.profile_id } }).then((res) => {
       if (res === "user added successfully") {
-        fetchData();
+        fetch();
       } else {
         alert(res?.errors ? res.errors : "error adding to org");
       }
