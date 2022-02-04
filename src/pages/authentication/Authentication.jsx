@@ -4,100 +4,104 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Box from "@mui/material/Box";
+import {Box, Grid} from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Grow from "@mui/material/Grow";
 import Notification from "../../components/notification/Notifications";
 import { useUserStore } from "../../store";
 import { requestHandler } from "../../helpers/requestHandler";
 
+import Login from "./Login";
+import Register from "./Register";
+
 function Authentication({}) {
-  const setUserData = useUserStore((state) => state.setUserData);
-  const [showLogin, setShowLogin] = useState(true);
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [registerData, setRegisterData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
-  const [loading, setLoading] = useState(false);
+  const [showFormType, setShowFormType] = useState("none"); // set to either "none", "login" or "register"
+  // const setUserData = useUserStore((state) => state.setUserData);
+  // const [showLogin, setShowLogin] = useState(true);
+  // const [loginData, setLoginData] = useState({ email: "", password: "" });
+  // const [registerData, setRegisterData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  // const [loading, setLoading] = useState(false);
   const [notify, setNotify] = useState({ type: "", message: "" });
 
-  const loginInputs = [
-    {
-      type: "email",
-      name: "email",
-      value: loginData.email,
-    },
-    {
-      type: "password",
-      minLength: 6,
-      name: "password",
-      value: loginData.password,
-      helperText: "Atleast 6 characters are required for the password",
-    },
-  ];
-  const passwordUnMatch =
-    registerData.password !== registerData.confirmPassword && registerData.confirmPassword && registerData.password;
-  const registerInputs = [
-    {
-      type: "text",
-      name: "name",
-      value: registerData.name,
-    },
-    {
-      type: "email",
-      name: "email",
-      value: registerData.email,
-    },
-    {
-      type: "password",
-      name: "password",
-      minLength: 6,
-      value: registerData.password,
-    },
-    {
-      type: "password",
-      name: "confirmPassword",
-      minLength: 6,
-      value: registerData.confirmPassword,
-      helperText: passwordUnMatch ? "Passwords do not match" : "Atleast 6 characters are required for the password",
-      error: passwordUnMatch,
-    },
-  ];
+  // const loginInputs = [
+  //   {
+  //     type: "email",
+  //     name: "email",
+  //     value: loginData.email,
+  //   },
+  //   {
+  //     type: "password",
+  //     minLength: 6,
+  //     name: "password",
+  //     value: loginData.password,
+  //     helperText: "Atleast 6 characters are required for the password",
+  //   },
+  // ];
+  // const passwordUnMatch =
+  //   registerData.password !== registerData.confirmPassword && registerData.confirmPassword && registerData.password;
+  // const registerInputs = [
+  //   {
+  //     type: "text",
+  //     name: "name",
+  //     value: registerData.name,
+  //   },
+  //   {
+  //     type: "email",
+  //     name: "email",
+  //     value: registerData.email,
+  //   },
+  //   {
+  //     type: "password",
+  //     name: "password",
+  //     minLength: 6,
+  //     value: registerData.password,
+  //   },
+  //   {
+  //     type: "password",
+  //     name: "confirmPassword",
+  //     minLength: 6,
+  //     value: registerData.confirmPassword,
+  //     helperText: passwordUnMatch ? "Passwords do not match" : "Atleast 6 characters are required for the password",
+  //     error: passwordUnMatch,
+  //   },
+  // ];
 
-  const onHandleChange = (value, name) => {
-    showLogin ? setLoginData({ ...loginData, [name]: value }) : setRegisterData({ ...registerData, [name]: value });
-  };
+  // const onHandleChange = (value, name) => {
+  //   showLogin ? setLoginData({ ...loginData, [name]: value }) : setRegisterData({ ...registerData, [name]: value });
+  // };
 
-  const onSubmit = (e) => {
-    console.log("runs");
-    e.preventDefault();
-    if (!showLogin && registerData.password !== registerData.confirmPassword) {
-      return setNotify({ type: "error", message: "Password and confirm password does not match" });
-    }
-    setLoading(true);
-    const login = (data) => {
-      requestHandler({ route: "auth/login", type: "post", body: data }).then((data) => {
-        setLoading(false);
-        if (data?.email) {
-          setUserData(data);
-        } else {
-          setNotify({ type: "error", message: data?.errors ? data.errors : "error logging in" });
-        }
-      });
-    };
+  // const onSubmit = (e) => {
+  //   console.log("runs");
+  //   e.preventDefault();
+  //   if (!showLogin && registerData.password !== registerData.confirmPassword) {
+  //     return setNotify({ type: "error", message: "Password and confirm password does not match" });
+  //   }
+  //   setLoading(true);
+  //   const login = (data) => {
+  //     requestHandler({ route: "auth/login", type: "post", body: data }).then((data) => {
+  //       setLoading(false);
+  //       if (data?.email) {
+  //         setUserData(data);
+  //       } else {
+  //         setNotify({ type: "error", message: data?.errors ? data.errors : "error logging in" });
+  //       }
+  //     });
+  //   };
 
-    if (showLogin) {
-      login(loginData);
-    } else {
-      requestHandler({ route: "auth/register", type: "post", body: registerData }).then((data) => {
-        setLoading(false);
-        if (data && data === "registered successfully") {
-          login(registerData);
-        } else {
-          setNotify({ type: "error", message: data?.errors ? data.errors : "error registering" });
-        }
-      });
-    }
-  };
-  const currentInputs = showLogin ? loginInputs : registerInputs;
+  //   if (showLogin) {
+  //     login(loginData);
+  //   } else {
+  //     requestHandler({ route: "auth/register", type: "post", body: registerData }).then((data) => {
+  //       setLoading(false);
+  //       if (data && data === "registered successfully") {
+  //         login(registerData);
+  //       } else {
+  //         setNotify({ type: "error", message: data?.errors ? data.errors : "error registering" });
+  //       }
+  //     });
+  //   }
+  // };
+  // const currentInputs = showLogin ? loginInputs : registerInputs;
 
   const cardStyles = {
     minWidth: 300,
@@ -120,7 +124,6 @@ function Authentication({}) {
     justifyContent: "center",
     alignItems: "center",
   };
-
   return (
     <>
       <div
@@ -132,8 +135,41 @@ function Authentication({}) {
         }}
       ></div>
       <Box sx={boxStyles}>
-        <Notification message={notify.message} type={notify.type} show={notify.type !== ""} setNotify={setNotify} />
-        <Grow in={currentInputs.length !== 0}>
+        <Notification
+          message={notify.message}
+          type={notify.type}
+          show={notify.type !== ""}
+          setNotify={setNotify}
+        />
+
+        {showFormType === "none" ? (
+          <Card raised  sx={cardStyles}>
+            <Typography variant={"h6"} sx={{ textAlign: 'center' }} color="primary">
+              Welcome to
+            </Typography>
+            <Typography  variant={"h2"} sx={{ mb: 2, textAlign: "center" }}  color="primary">
+              Tasker
+            </Typography>
+            <Grid container spacing={2} sx={{mt: 4, justifyContent: "space-between" }} >
+
+              <Button onClick={()=>setShowFormType("login")} variant="contained">Sign in</Button>
+              <Button onClick={()=>setShowFormType("register")} variant="contained">Register</Button>
+            </Grid>
+          </Card>
+        ) : showFormType === "login" ? (
+          <Login
+            setShowFormType={setShowFormType}
+            cardStyles={cardStyles}
+            setNotify={setNotify}
+          />
+        ) : (
+          <Register
+            setShowFormType={setShowFormType}
+            cardStyles={cardStyles}
+            setNotify={setNotify}
+          />
+        )}
+        {/* <Grow in={currentInputs.length !== 0}>
           <Card raised sx={cardStyles}>
             <Typography variant={"h5"} sx={{ mb: 2 }} color="primary">
               {showLogin ? "Login" : "Register"}
@@ -169,7 +205,7 @@ function Authentication({}) {
             </Typography>
             {loading && <LinearProgress sx={{ mt: 1 }} />}
           </Card>
-        </Grow>
+        </Grow> */}
       </Box>
     </>
   );
